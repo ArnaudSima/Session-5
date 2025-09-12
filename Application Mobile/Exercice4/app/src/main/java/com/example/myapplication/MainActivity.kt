@@ -11,8 +11,22 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.absolutePadding
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.Button
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
@@ -32,8 +46,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             MyApplicationTheme {
                 Box() {
-                    JeuDe()
-                }
+                    ScaffoldExemple()                }
             }
         }
     }
@@ -46,10 +59,54 @@ fun Greeting(name: String, modifier: Modifier = Modifier) {
         modifier = modifier
     )
 }
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun ScaffoldExemple() {
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = { Text("Mon Application")
+                },
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = MaterialTheme.colorScheme.primary,
+                    titleContentColor = MaterialTheme.colorScheme.onPrimary,
+                    actionIconContentColor = MaterialTheme.colorScheme.onPrimary
+                )
+            )
+        },
+        bottomBar = {
+            BottomAppBar(containerColor = MaterialTheme.colorScheme.primary,
+                contentColor = MaterialTheme.colorScheme.onPrimary) {
+                Row(modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.Center) {
+                    IconButton(onClick = { /*Faire quelque chose*/ }) {
+                        Icon(Icons.Default.Home, contentDescription = "Accueil")
+                    }
+                    IconButton(onClick = { /*Faire quelque chose*/ }) {
+                        Icon(Icons.Default.Search, contentDescription = "Recherche")
+                    }
+                    IconButton(onClick = { /*Faire quelque chose*/ }) {
+                        Icon(Icons.Default.Settings, contentDescription = "Paramètres")
+                    }
+                }
+            }
+        }
+
+
+    ) { padding ->
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(padding),
+            contentAlignment = Alignment.Center
+        ) {
+            JeuDe()
+        }
+    }
+}
 
 @Composable
-fun JeuDe() {
-    var scoreJoueur1 by remember { mutableIntStateOf(0) }
+fun JeuDe() {    var scoreJoueur1 by remember { mutableIntStateOf(0) }
     var scoreJoueur2 by remember { mutableIntStateOf(0) }
     var indiceListe by remember { mutableIntStateOf(0) }
     var indiceDuJoueurEnJeu by remember { mutableIntStateOf(0) }
