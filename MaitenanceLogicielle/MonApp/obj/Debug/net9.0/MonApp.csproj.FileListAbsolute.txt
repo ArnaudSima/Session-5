@@ -1,0 +1,15 @@
+C:\Users\2267339\Documents\GitHub\Session-5\MaitenanceLogicielle\MonApp\bin\Debug\net9.0\MonApp.exe
+C:\Users\2267339\Documents\GitHub\Session-5\MaitenanceLogicielle\MonApp\bin\Debug\net9.0\MonApp.deps.json
+C:\Users\2267339\Documents\GitHub\Session-5\MaitenanceLogicielle\MonApp\bin\Debug\net9.0\MonApp.runtimeconfig.json
+C:\Users\2267339\Documents\GitHub\Session-5\MaitenanceLogicielle\MonApp\bin\Debug\net9.0\MonApp.dll
+C:\Users\2267339\Documents\GitHub\Session-5\MaitenanceLogicielle\MonApp\bin\Debug\net9.0\MonApp.pdb
+C:\Users\2267339\Documents\GitHub\Session-5\MaitenanceLogicielle\MonApp\obj\Debug\net9.0\MonApp.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\2267339\Documents\GitHub\Session-5\MaitenanceLogicielle\MonApp\obj\Debug\net9.0\MonApp.AssemblyInfoInputs.cache
+C:\Users\2267339\Documents\GitHub\Session-5\MaitenanceLogicielle\MonApp\obj\Debug\net9.0\MonApp.AssemblyInfo.cs
+C:\Users\2267339\Documents\GitHub\Session-5\MaitenanceLogicielle\MonApp\obj\Debug\net9.0\MonApp.csproj.CoreCompileInputs.cache
+C:\Users\2267339\Documents\GitHub\Session-5\MaitenanceLogicielle\MonApp\obj\Debug\net9.0\MonApp.sourcelink.json
+C:\Users\2267339\Documents\GitHub\Session-5\MaitenanceLogicielle\MonApp\obj\Debug\net9.0\MonApp.dll
+C:\Users\2267339\Documents\GitHub\Session-5\MaitenanceLogicielle\MonApp\obj\Debug\net9.0\refint\MonApp.dll
+C:\Users\2267339\Documents\GitHub\Session-5\MaitenanceLogicielle\MonApp\obj\Debug\net9.0\MonApp.pdb
+C:\Users\2267339\Documents\GitHub\Session-5\MaitenanceLogicielle\MonApp\obj\Debug\net9.0\MonApp.genruntimeconfig.cache
+C:\Users\2267339\Documents\GitHub\Session-5\MaitenanceLogicielle\MonApp\obj\Debug\net9.0\ref\MonApp.dll

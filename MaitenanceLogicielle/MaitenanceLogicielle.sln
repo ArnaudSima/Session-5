@@ -1,0 +1,30 @@
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.5.2.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MonApp", "MonApp\MonApp.csproj", "{BCCB1001-8E48-8CF8-EB3B-9326E5CA8C11}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MonAppTest", "MonAppTest\MonAppTest.csproj", "{A9A50EF0-2234-F538-8249-E4807DE1EAE8}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{BCCB1001-8E48-8CF8-EB3B-9326E5CA8C11}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BCCB1001-8E48-8CF8-EB3B-9326E5CA8C11}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BCCB1001-8E48-8CF8-EB3B-9326E5CA8C11}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BCCB1001-8E48-8CF8-EB3B-9326E5CA8C11}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A9A50EF0-2234-F538-8249-E4807DE1EAE8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A9A50EF0-2234-F538-8249-E4807DE1EAE8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A9A50EF0-2234-F538-8249-E4807DE1EAE8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A9A50EF0-2234-F538-8249-E4807DE1EAE8}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {C6F8E8FB-88DA-4720-BC6B-76C4F526063F}
+	EndGlobalSection
+EndGlobal
