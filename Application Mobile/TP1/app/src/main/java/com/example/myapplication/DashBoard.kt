@@ -4,6 +4,9 @@ import android.graphics.drawable.shapes.Shape
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -14,11 +17,13 @@ import androidx.compose.material3.Divider
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
@@ -48,16 +53,24 @@ fun DashBoard(navController: NavController) {
             image = R.drawable.silverado,
             son = R.raw.pick_up_son,
             prix = 10000
+        ),  Vehicule(
+            modele = "1993 shadow vt1100",
+            kilometrage = 70000,
+            image = R.drawable.shadow,
+            son = R.raw.pick_up_son,
+            prix = 2000
         ),
     )
     LazyColumn {
         items(items = listeVehicules) { vehicule ->
-            Column {
+            Column(){
                 Text(vehicule.modele)
                 Text(vehicule.kilometrage.toString())
                 Image(
+                    modifier = Modifier.fillMaxWidth().height(300.dp).padding(0.dp,2.dp),
                     painter = painterResource(vehicule.image),
-                    contentDescription = vehicule.modele
+                    contentDescription = vehicule.modele,
+                    contentScale = ContentScale.Crop
                 )
                 IconButton(onClick = {},
                     modifier = Modifier
@@ -68,7 +81,7 @@ fun DashBoard(navController: NavController) {
                         contentDescription = "playButton"
                     )
                 }
-                HorizontalDivider()
+                HorizontalDivider(thickness = 5.dp, color = MaterialTheme.colorScheme.secondary)
             }
 
 
