@@ -74,7 +74,10 @@ class Routeur : ComponentActivity() {
         }
 
     }
+    @Composable
+    fun StateTopBar(){
 
+    }
     @Preview(showBackground = true)
     @Composable
     fun GreetingPreview() {

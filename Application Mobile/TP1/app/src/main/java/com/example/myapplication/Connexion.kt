@@ -46,7 +46,6 @@ import androidx.navigation.NavController
 
         val context = LocalContext.current
 
-        data class Utilisateur(val nomUtilisateur: String, val motDePasse: String)
 
         val TAG = "Connexion"
         val admin = Utilisateur("Admin", "123")
