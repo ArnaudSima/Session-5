@@ -32,5 +32,20 @@ class Helper {
 
         }
 
+        fun SupprimerVehiculeSelonId(idRecherche: Int) {
+            val index = listeVehicules.indexOfFirst { it.id == idRecherche }
+            try {
+                if (index == -1) {
+                    Log.d(Tag, "Le vehicule n'existe pas dans la liste")
+                    return;
+                }
+                Log.d(Tag, "Id du vehicule a supprimer : $idRecherche")
+                listeVehicules.removeAt(index)
+                Log.d(Tag, "Vehicule supprimer avec succes!")
+            } catch (e: Exception) {
+                Log.d(Tag, "Erreur lors de la suppression du vehicule")
+            }
+        }
+
     }
 }
