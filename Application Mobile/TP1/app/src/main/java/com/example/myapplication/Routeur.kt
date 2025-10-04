@@ -24,7 +24,37 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 
 val fontFamily = FontFamily(Font(R.font.yesteryear, FontWeight.Normal))
+var listeVehicules = mutableListOf<Vehicule>(
+    Vehicule(
+        id = 1,
+        titre = "1977 Ford Mustang Shelby",
+        kilometrage = 120000,
+        image = R.drawable.shelby,
+        prix = 12000
+    ),
+    Vehicule(
+        id = 2,
+        titre = "1980 Ford Bronco",
+        kilometrage = 80000,
+        image = R.drawable.bronco,
+        prix = 15000,
 
+        ),
+    Vehicule(
+        id = 3,
+        titre = "1982 chevrolet silverado",
+        kilometrage = 120000,
+        image = R.drawable.silverado,
+        prix = 10000
+    ),
+    Vehicule(
+        id = 4,
+        titre = "1993 shadow vt1100",
+        kilometrage = 70000,
+        image = R.drawable.shadow,
+        prix = 2000
+    ),
+)
 class Routeur : ComponentActivity() {
     @OptIn(ExperimentalMaterial3Api::class)
     override fun onCreate(savedInstanceState: Bundle?) {

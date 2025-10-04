@@ -48,42 +48,6 @@ import com.example.myapplication.Enums.ActionPossibleModification
 import com.example.myapplication.Enums.EcransPageConnexion
 
 
-var listeVehicules = listOf<Vehicules>(
-    Vehicules(
-        id = 1,
-        titre = "1977 Ford Mustang Shelby",
-        kilometrage = 120000,
-        image = R.drawable.shelby,
-        son = R.raw.shelby_son,
-        prix = 12000
-    ),
-    Vehicules(
-        id = 2,
-        titre = "1980 Ford Bronco",
-        kilometrage = 80000,
-        image = R.drawable.bronco,
-        son = R.raw.bronco_son,
-        prix = 15000,
-
-        ),
-    Vehicules(
-        id = 3,
-        titre = "1982 chevrolet silverado",
-        kilometrage = 120000,
-        image = R.drawable.silverado,
-        son = R.raw.pick_up_son,
-        prix = 10000
-    ),
-    Vehicules(
-        id = 4,
-        titre = "1993 shadow vt1100",
-        kilometrage = 70000,
-        image = R.drawable.shadow,
-        son = R.raw.pick_up_son,
-        prix = 2000
-    ),
-)
-
 @Composable
 fun DashBoard(navController: NavController) {
     val context = LocalContext.current
@@ -91,7 +55,7 @@ fun DashBoard(navController: NavController) {
     var idSelectionne by remember { mutableIntStateOf(1) }
     var ecransPageConnexion by remember { mutableStateOf(EcransPageConnexion.LISTE) }
     when (ecransPageConnexion) {
-        EcransPageConnexion.MODIFICATION -> ModificationVehicule(
+        EcransPageConnexion.AFFICHAGEVEHICULESPECIFIQUE -> AffichageVehiculeSpecifique(
             idSelectionne, context
         )
 
@@ -113,7 +77,7 @@ fun ListeVehicules(
         items(items = listeVehicules) { vehicule ->
             Column(modifier = Modifier.clickable(onClick = {
                 onChangeId(vehicule.id)
-                onChangeEcransPageConnexion(EcransPageConnexion.MODIFICATION)
+                onChangeEcransPageConnexion(EcransPageConnexion.AFFICHAGEVEHICULESPECIFIQUE)
             })) {
                 Text(vehicule.titre)
                 Text(vehicule.kilometrage.toString())
@@ -126,16 +90,7 @@ fun ListeVehicules(
                     contentDescription = vehicule.titre,
                     contentScale = ContentScale.Crop
                 )
-                IconButton(
-                    onClick = {},
-                    modifier = Modifier
-                        .border(1.dp, Color.Black, shape = CircleShape)
-                        .size(20.dp)
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.PlayArrow, contentDescription = "playButton"
-                    )
-                }
+
                 HorizontalDivider(thickness = 5.dp, color = MaterialTheme.colorScheme.secondary)
             }
 
@@ -145,21 +100,19 @@ fun ListeVehicules(
 }
 
 @Composable
-fun ModificationVehicule(idSelectionne: Int, context: Context) {
-    val vehiculeAffiche = Helper.ChoisirVehiculeSelonId(idSelectionne)
-    var Titre by remember { mutableStateOf(vehiculeAffiche.titre) }
-    var Kilometrage by remember { mutableIntStateOf(vehiculeAffiche.kilometrage) }
-    var Prix by remember { mutableStateOf(vehiculeAffiche.prix) }
-    var Son by remember { mutableIntStateOf(vehiculeAffiche.son) }
-    var Image by remember { mutableIntStateOf(vehiculeAffiche.image) }
+fun AffichageVehiculeSpecifique(idSelectionne: Int, context: Context) {
     var ActionEnCours by remember { mutableStateOf(ActionPossibleModification.DEFAUT) }
+    val vehiculeAffiche = Helper.ChoisirVehiculeSelonId(idSelectionne)
     when (ActionEnCours) {
         ActionPossibleModification.DEFAUT ->
-            ModeDefaut(vehiculeAffiche,context,onChangeActionEnCours = { ActionEnCours = it })
+            ModeDefaut(vehiculeAffiche, context, onChangeActionEnCours = { ActionEnCours = it })
 
         ActionPossibleModification.MODIFICATION ->
             ModeModification(
-                vehiculeAffiche, context, onChangeActionEnCours = { ActionEnCours = it })
+                idSelectionne,
+                vehiculeAffiche,
+                context,
+                onChangeActionEnCours = { ActionEnCours = it })
 
         ActionPossibleModification.SUPPRESSION -> Text("Supprime")
     }
@@ -168,7 +121,8 @@ fun ModificationVehicule(idSelectionne: Int, context: Context) {
 
 @Composable
 fun ModeModification(
-    vehiculeAffiche: Vehicules,
+    idSelectionne: Int,
+    vehiculeAffiche: Vehicule,
     context: Context,
     onChangeActionEnCours: (ActionPossibleModification) -> Unit,
 ) {
@@ -226,18 +180,7 @@ fun ModeModification(
                             }
                         }, modifier = Modifier.padding(5.dp, 0.dp))
                     }
-                    IconButton(
-                        onClick = {},
-                        modifier = Modifier
-                            .border(1.dp, Color.Black, shape = CircleShape)
-                            .size(20.dp)
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.PlayArrow,
-                            contentDescription = "playButton",
-                            modifier = Modifier.padding(5.dp, 0.dp)
-                        )
-                    }
+
                 }
 
 
@@ -264,7 +207,13 @@ fun ModeModification(
 
         }
         Row {
-            Button(onClick = { onChangeActionEnCours(ActionPossibleModification.DEFAUT) }) { Text("Enregistrer") }
+            Button(onClick = {
+                Helper.ModifierVehiculesSelonId(
+                    idSelectionne,
+                    Vehicule(idSelectionne, Titre, Kilometrage, Image, Prix)
+                )
+                onChangeActionEnCours(ActionPossibleModification.DEFAUT)
+            }) { Text("Enregistrer") }
             Button(onClick = { onChangeActionEnCours(ActionPossibleModification.DEFAUT) }) { Text("Annuler") }
         }
     }
@@ -273,7 +222,9 @@ fun ModeModification(
 
 @Composable
 fun ModeDefaut(
-    vehiculeAffiche: Vehicules,context: Context, onChangeActionEnCours: (ActionPossibleModification) -> Unit
+    vehiculeAffiche: Vehicule,
+    context: Context,
+    onChangeActionEnCours: (ActionPossibleModification) -> Unit
 ) {
     var Titre by remember { mutableStateOf(vehiculeAffiche.titre) }
     var Kilometrage by remember { mutableIntStateOf(vehiculeAffiche.kilometrage) }
@@ -316,18 +267,7 @@ fun ModeDefaut(
                         )
                         Text("Prix : $Prix", modifier = Modifier.padding(5.dp, 0.dp))
                     }
-                    IconButton(
-                        onClick = {},
-                        modifier = Modifier
-                            .border(1.dp, Color.Black, shape = CircleShape)
-                            .size(20.dp)
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.PlayArrow,
-                            contentDescription = "playButton",
-                            modifier = Modifier.padding(5.dp, 0.dp)
-                        )
-                    }
+
                 }
 
                 Column(
