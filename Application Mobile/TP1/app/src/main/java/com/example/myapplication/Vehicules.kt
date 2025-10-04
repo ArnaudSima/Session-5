@@ -1,6 +1,6 @@
 package com.example.myapplication
 
-data class Vehicule(
+data class Vehicules(
     val id: Int,
     var titre: String,
     var kilometrage: Int,
