@@ -1,4 +1,4 @@
-package com.example.myapplication
+package com.example.myapplication.View.Pages
 import android.content.Context
 import android.widget.Toast
 import androidx.compose.foundation.Image
@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
@@ -27,18 +28,28 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.core.text.isDigitsOnly
-import com.example.myapplication.Enums.ActionPossibleModification
+import androidx.navigation.NavController
+import com.example.myapplication.View.Enums.ActionPossibleModification
+import com.example.myapplication.Middleware.Fonctions
+import com.example.myapplication.Middleware.Vehicule
+import com.example.myapplication.View.Routes
 
 @Composable
-fun AffichageVehiculeSpecifique(idSelectionne: Int, context: Context) {
+fun AffichageVehiculeSpecifique(navController: NavController, idSelectionne: Int) {
     var ActionEnCours by remember { mutableStateOf(ActionPossibleModification.DEFAUT) }
-    val vehiculeAffiche = Helper.ChoisirVehiculeSelonId(idSelectionne)
+    val context = LocalContext.current
+    val vehiculeAffiche = Fonctions.ChoisirVehiculeSelonId(idSelectionne)
     when (ActionEnCours) {
         ActionPossibleModification.DEFAUT ->
-            ModeDefaut(vehiculeAffiche, context, onChangeActionEnCours = { ActionEnCours = it })
+            ModeDefaut(
+                navController,
+                vehiculeAffiche,
+                context,
+                onChangeActionEnCours = { ActionEnCours = it })
 
         ActionPossibleModification.MODIFICATION ->
             ModeModification(
@@ -47,12 +58,13 @@ fun AffichageVehiculeSpecifique(idSelectionne: Int, context: Context) {
                 context,
                 onChangeActionEnCours = { ActionEnCours = it })
 
-        ActionPossibleModification.SUPPRESSION -> Text("Supprime")
+        ActionPossibleModification.SUPPRESSION -> ModeSuppression()
     }
 
 }
+
 @Composable
-fun ModeModifiscation(
+fun ModeModification(
     idSelectionne: Int,
     vehiculeAffiche: Vehicule,
     context: Context,
@@ -140,7 +152,7 @@ fun ModeModifiscation(
         }
         Row {
             Button(onClick = {
-                Helper.ModifierVehiculesSelonId(
+                Fonctions.ModifierVehiculesSelonId(
                     idSelectionne,
                     Vehicule(idSelectionne, Titre, Kilometrage, Image, Prix)
                 )
@@ -154,7 +166,8 @@ fun ModeModifiscation(
 
 @Composable
 
-fun ModeDesfaut(
+fun ModeDefaut(
+    navController: NavController,
     vehiculeAffiche: Vehicule,
     context: Context,
     onChangeActionEnCours: (ActionPossibleModification) -> Unit
@@ -165,10 +178,18 @@ fun ModeDesfaut(
     var Image by remember { mutableIntStateOf(vehiculeAffiche.image) }
     Column(
         modifier = Modifier.fillMaxSize(),
-        verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Button(onClick = {}) { Text("Retourner") }
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(200.dp)
+        ) {
+            Button(
+                onClick = { navController.navigate(Routes.DashBoard.route) },
+                colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.secondary)
+            ) { Text("Retourner") }
+        }
         Column(
             Modifier
                 .border(
@@ -221,17 +242,33 @@ fun ModeDesfaut(
 
         }
         Row {
-            Button(onClick = {
-                onChangeActionEnCours(ActionPossibleModification.MODIFICATION)
-            }) { Text("Modifier") }
-            Button(onClick = {
-                onChangeActionEnCours(ActionPossibleModification.SUPPRESSION)
-                Helper.SupprimerVehiculeSelonId(vehiculeAffiche.id)
-            }) {
+            Button(
+                onClick = {
+                    onChangeActionEnCours(ActionPossibleModification.MODIFICATION)
+                },
+                colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.secondary)
+            ) { Text("Modifier") }
+            Button(
+                onClick = {
+                    onChangeActionEnCours(ActionPossibleModification.SUPPRESSION)
+                    Fonctions.SupprimerVehiculeSelonId(vehiculeAffiche.id)
+                },
+                colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.secondary)
+            ) {
                 Text(
                     "Supprimer"
                 )
             }
         }
     }
+
+}
+
+@Composable
+fun ModeSuppression() {
+    Column(
+        modifier = Modifier.fillMaxSize(),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
+    ) { Text("Vehicule supprime") }
 }

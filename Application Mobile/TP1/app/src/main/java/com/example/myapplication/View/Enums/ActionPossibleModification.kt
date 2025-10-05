@@ -1,4 +1,4 @@
-package com.example.myapplication.Enums
+package com.example.myapplication.View.Enums
 
 enum class ActionPossibleModification {
     DEFAUT,

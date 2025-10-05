@@ -1,4 +1,4 @@
-package com.example.myapplication
+package com.example.myapplication.View.Pages
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -22,39 +22,12 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.example.myapplication.Data.Vehicules
 
-val fontFamily = FontFamily(Font(R.font.yesteryear, FontWeight.Normal))
-var listeVehicules = mutableListOf<Vehicule>(
-    Vehicule(
-        id = 1,
-        titre = "1977 Ford Mustang Shelby",
-        kilometrage = 120000,
-        image = R.drawable.shelby,
-        prix = 12000
-    ),
-    Vehicule(
-        id = 2,
-        titre = "1980 Ford Bronco",
-        kilometrage = 80000,
-        image = R.drawable.bronco,
-        prix = 15000,
+val fontFamily = FontFamily(Font(_root_ide_package_.com.example.myapplication.R.font.yesteryear, FontWeight.Normal))
+var idSelectionne = 0
+var listeVehicules = Vehicules().ListeVehicules
 
-        ),
-    Vehicule(
-        id = 3,
-        titre = "1982 chevrolet silverado",
-        kilometrage = 120000,
-        image = R.drawable.silverado,
-        prix = 10000
-    ),
-    Vehicule(
-        id = 4,
-        titre = "1993 shadow vt1100",
-        kilometrage = 70000,
-        image = R.drawable.shadow,
-        prix = 2000
-    ),
-)
 class Routeur : ComponentActivity() {
     @OptIn(ExperimentalMaterial3Api::class)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -94,20 +67,32 @@ class Routeur : ComponentActivity() {
         Box(modifier = modifier) {
             NavHost(
                 navController = navController,
-                startDestination = Ecrans.Connexion.route
+                startDestination = _root_ide_package_.com.example.myapplication.View.Routes.Connexion.route
             ) {
-                composable(route = Ecrans.Connexion.route) {
+                composable(route = _root_ide_package_.com.example.myapplication.View.Routes.Connexion.route) {
                     Connexion(navController)
                 }
-                composable(route = Ecrans.DashBoard.route) { DashBoard(navController) }
+                composable(route = _root_ide_package_.com.example.myapplication.View.Routes.DashBoard.route) {
+                    DashBoard(
+                        navController,
+                        onChangeId = { idSelectionne = it })
+                }
+                composable(route = _root_ide_package_.com.example.myapplication.View.Routes.Modification.route) {
+                    AffichageVehiculeSpecifique(
+                        navController,
+                        idSelectionne
+                    )
+                }
             }
         }
 
     }
+
     @Composable
-    fun StateTopBar(){
+    fun StateTopBar() {
 
     }
+
     @Preview(showBackground = true)
     @Composable
     fun GreetingPreview() {

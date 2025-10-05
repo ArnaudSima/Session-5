@@ -1,4 +1,4 @@
-package com.example.myapplication
+package com.example.myapplication.View.Pages
 
 import android.util.Log
 import android.widget.Toast
@@ -15,11 +15,8 @@ import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
-import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -28,11 +25,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import com.example.myapplication.View.Routes
+import com.example.myapplication.View.Utilisateur
 
 @OptIn(ExperimentalMaterial3Api::class)
 
@@ -145,7 +143,7 @@ import androidx.navigation.NavController
                     Log.d(TAG, "Valeur mot de passe : ${motDePasse.value}")
                     if (motDePasse.value == admin.motDePasse && nomUtilisateur.value == admin.nomUtilisateur) {
                         messageUtilisateur.value = "Connexion..."
-                        navController.navigate(Ecrans.DashBoard.route)
+                        navController.navigate(Routes.DashBoard.route)
                     } else {
                         messageUtilisateur.value = "Mauvais mot de passe ou nom d'utilisateur"
                     }
