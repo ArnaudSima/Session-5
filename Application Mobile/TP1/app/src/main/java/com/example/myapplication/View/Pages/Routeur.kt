@@ -22,11 +22,11 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.example.myapplication.Data.Vehicules
+import com.example.myapplication.Middleware.Vehicules.Vehicules
 
 val fontFamily = FontFamily(Font(_root_ide_package_.com.example.myapplication.R.font.yesteryear, FontWeight.Normal))
 var idSelectionne = 0
-var listeVehicules = Vehicules().ListeVehicules
+//var listeVehicules = Vehicules().ListeVehicules
 
 class Routeur : ComponentActivity() {
     @OptIn(ExperimentalMaterial3Api::class)
