@@ -1,6 +1,5 @@
 package com.example.myapplication.View.Pages
 
-import android.content.Context
 import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.background
@@ -13,13 +12,11 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonColors
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -33,23 +30,16 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.myapplication.Data.utilisateur.Utilisateur
 import com.example.myapplication.MiddleWare.UtilisateurViewModel
-import com.example.myapplication.MiddleWare.VehiculeViewModel
 import com.example.myapplication.View.Routes
 
-@OptIn(ExperimentalMaterial3Api::class)
-
 @Composable
-fun Connexion(
-    navController: NavController,
-    viewModel: UtilisateurViewModel,
-    onChangeIdUtilisateur: (Int) -> Unit
-) {
+fun Inscription(navController: NavController,viewModel: UtilisateurViewModel,onChangeIdUtilisateur: (Int) -> Unit){
     val motDePasse = remember { mutableStateOf("") }
     val nomUtilisateur = remember { mutableStateOf("") }
+    val context = LocalContext.current
 
 
-    val TAG = "Connexion"
-    val Context = LocalContext.current
+    val TAG = "Inscription"
     Column(
         modifier = Modifier.fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -76,7 +66,7 @@ fun Connexion(
                 verticalArrangement = Arrangement.Center,
             ) {
                 Text(
-                    text = "Connexion",
+                    text = "Inscription",
                     fontSize = 30.sp,
                     color = MaterialTheme.colorScheme.onSecondary
                 )
@@ -141,16 +131,17 @@ fun Connexion(
         }
 
         Button(
-            content = { Text("Se connecter", fontSize = 20.sp) }, onClick = {
-                ConnecterUtilisateur(
-                    TAG = TAG,
-                    viewModel = viewModel,
-                    nomUtilisateur = nomUtilisateur.value,
-                    motDePasse = motDePasse.value.toInt(),
-                    onChangeIdUtilisateur = { onChangeIdUtilisateur(it) },
-                    onChangeRoute = {navController.navigate(it)},
-                    context = Context)
-
+            content = { Text("S'Inscrire", fontSize = 20.sp) }, onClick = {
+                Log.d(TAG, "Valeur nom utilisateur : ${nomUtilisateur.value}")
+                Log.d(TAG, "Valeur mot de passe : ${motDePasse.value}")
+                val utilisateur = Utilisateur(nomUtilisateur = nomUtilisateur.value, motDePasse = motDePasse.value.toInt())
+                viewModel.add(utilisateur)
+                Log.d(TAG, "Utilisateur ajoute a la base de donnée")
+                onChangeIdUtilisateur(utilisateur.idUtilisateur)
+                val toast = Toast.makeText(context,"Inscription complété avec succès! Connexion en cours...", Toast.LENGTH_SHORT)
+                toast.show()
+                Log.d(TAG, "Redirection vers dashboard")
+                navController.navigate(Routes.DashBoard.route)
             }, colors = ButtonColors(
                 containerColor = MaterialTheme.colorScheme.secondary,
                 contentColor = MaterialTheme.colorScheme.onSecondary,
@@ -160,31 +151,3 @@ fun Connexion(
         )
     }
 }
-
-fun ConnecterUtilisateur(
-    TAG: String,
-    viewModel: UtilisateurViewModel,
-    nomUtilisateur: String,
-    motDePasse: Int,
-    onChangeIdUtilisateur: (Int) -> Unit,
-    onChangeRoute: (String) -> Unit,
-    context: Context
-) {
-    var messageUtilisateur ="Mauvais mot de passe ou nom d'utilisateur"
-
-    Log.d(TAG, "Valeur nom utilisateur : ${nomUtilisateur}")
-    Log.d(TAG, "Valeur mot de passe : ${motDePasse}")
-    //doit etre une coroutine
-    val utilisateur: Utilisateur? = viewModel.verifierIdentifiants(nomUtilisateur = nomUtilisateur, motDePasse = motDePasse)
-    Log.d(TAG, "Utilisateur qui se connecte : $utilisateur")
-    if (utilisateur != null) {
-        onChangeIdUtilisateur(utilisateur.idUtilisateur)
-        messageUtilisateur = "Connexion en cours..."
-        onChangeRoute(Routes.DashBoard.route)
-    } else {
-        messageUtilisateur = "Mauvais mot de passe ou nom d'utilisateur"
-    }
-    val toast = Toast.makeText(context, messageUtilisateur, Toast.LENGTH_SHORT)
-    toast.show()
-}
-

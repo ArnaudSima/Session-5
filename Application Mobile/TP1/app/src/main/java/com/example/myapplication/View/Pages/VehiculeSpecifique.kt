@@ -19,6 +19,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -33,30 +34,38 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.core.text.isDigitsOnly
 import androidx.navigation.NavController
+import com.example.myapplication.Data.Vehicule.Vehicule
+import com.example.myapplication.Data.utilisateur.Utilisateur
+import com.example.myapplication.MiddleWare.VehiculeViewModel
 import com.example.myapplication.View.Enums.ActionPossibleModification
-import com.example.myapplication.Middleware.Fonctions
-import com.example.myapplication.Middleware.Vehicule
 import com.example.myapplication.View.Routes
 
 @Composable
-fun AffichageVehiculeSpecifique(navController: NavController, idSelectionne: Int) {
-    var ActionEnCours by remember { mutableStateOf(ActionPossibleModification.DEFAUT) }
+fun AffichageVehiculeSpecifique(navController: NavController, vehiculeViewModel: VehiculeViewModel, idVehiculeAffiche : Int,idUtilisateur: Int) {
+    var actionEnCours by remember { mutableStateOf(ActionPossibleModification.DEFAUT) }
     val context = LocalContext.current
-    val vehiculeAffiche = Fonctions.ChoisirVehiculeSelonId(idSelectionne)
-    when (ActionEnCours) {
+    val vehiculeAfficheNullable = vehiculeViewModel.getVehiculeById(idVehiculeAffiche).collectAsState(initial = null).value
+    var vehiculeAffiche = Vehicule(0,"default", 0,0,0,0)
+    if (vehiculeAfficheNullable != null){
+        vehiculeAffiche = vehiculeAfficheNullable
+    }
+    when (actionEnCours) {
         ActionPossibleModification.DEFAUT ->
             ModeDefaut(
                 navController,
                 vehiculeAffiche,
                 context,
-                onChangeActionEnCours = { ActionEnCours = it })
+                onChangeActionEnCours = { actionEnCours = it },
+                vehiculeViewModel)
 
         ActionPossibleModification.MODIFICATION ->
             ModeModification(
-                idSelectionne,
                 vehiculeAffiche,
                 context,
-                onChangeActionEnCours = { ActionEnCours = it })
+                onChangeActionEnCours = { actionEnCours = it },
+                vehiculeViewModel,
+                idUtilisateur
+                )
 
         ActionPossibleModification.SUPPRESSION -> ModeSuppression()
     }
@@ -65,15 +74,16 @@ fun AffichageVehiculeSpecifique(navController: NavController, idSelectionne: Int
 
 @Composable
 fun ModeModification(
-    idSelectionne: Int,
     vehiculeAffiche: Vehicule,
     context: Context,
     onChangeActionEnCours: (ActionPossibleModification) -> Unit,
+    vehiculeViewModel: VehiculeViewModel,
+    idUtilisateur: Int
 ) {
-    var Titre by remember { mutableStateOf(vehiculeAffiche.titre) }
-    var Kilometrage by remember { mutableIntStateOf(vehiculeAffiche.kilometrage) }
-    var Prix by remember { mutableStateOf(vehiculeAffiche.prix) }
-    var Image by remember { mutableIntStateOf(vehiculeAffiche.image) }
+    var titre by remember { mutableStateOf(vehiculeAffiche.titre) }
+    var kilometrage by remember { mutableIntStateOf(vehiculeAffiche.kilometrage) }
+    var prix by remember { mutableIntStateOf(vehiculeAffiche.prix) }
+    var image by remember { mutableIntStateOf(vehiculeAffiche.image) }
     Column(
         modifier = Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.Center,
@@ -96,8 +106,8 @@ fun ModeModification(
                     .border(width = 3.dp, color = MaterialTheme.colorScheme.secondary),
             ) {
                 TextField(
-                    value = Titre,
-                    onValueChange = { Titre = it },
+                    value = titre,
+                    onValueChange = { titre = it },
                     modifier = Modifier.padding(0.dp, 5.dp)
                 )
             }
@@ -109,16 +119,16 @@ fun ModeModification(
                     modifier = Modifier.fillMaxWidth()
                 ) {
                     Column {
-                        TextField(value = "$Kilometrage", onValueChange = {
+                        TextField(value = "$kilometrage", onValueChange = {
                             if (it.isDigitsOnly()) {
-                                Kilometrage = it.toInt()
+                                kilometrage = it.toInt()
                             } else {
                                 mauvaisInput.show()
                             }
                         }, modifier = Modifier.padding(5.dp, 0.dp))
-                        TextField(value = "$Prix", onValueChange = {
+                        TextField(value = "$prix", onValueChange = {
                             if (it.isDigitsOnly()) {
-                                Prix = it.toInt()
+                                prix = it.toInt()
                             } else {
                                 mauvaisInput.show()
                             }
@@ -135,8 +145,8 @@ fun ModeModification(
                     .fillMaxWidth(), contentAlignment = Alignment.Center
             ) {
                 Image(
-                    painter = painterResource(Image),
-                    contentDescription = Titre,
+                    painter = painterResource(image),
+                    contentDescription = titre,
                     contentScale = ContentScale.Crop,
                     modifier = Modifier
                         .fillMaxSize()
@@ -152,10 +162,8 @@ fun ModeModification(
         }
         Row {
             Button(onClick = {
-                Fonctions.ModifierVehiculesSelonId(
-                    idSelectionne,
-                    Vehicule(idSelectionne, Titre, Kilometrage, Image, Prix)
-                )
+                val vehicule = Vehicule(titre =  titre, kilometrage =  kilometrage, image =  image, prix =  prix, idUtilisateur = idUtilisateur)
+                vehiculeViewModel.update(vehicule)
                 onChangeActionEnCours(ActionPossibleModification.DEFAUT)
             }) { Text("Enregistrer") }
             Button(onClick = { onChangeActionEnCours(ActionPossibleModification.DEFAUT) }) { Text("Annuler") }
@@ -170,12 +178,13 @@ fun ModeDefaut(
     navController: NavController,
     vehiculeAffiche: Vehicule,
     context: Context,
-    onChangeActionEnCours: (ActionPossibleModification) -> Unit
+    onChangeActionEnCours: (ActionPossibleModification) -> Unit,
+    vehiculeViewModel: VehiculeViewModel
 ) {
-    var Titre by remember { mutableStateOf(vehiculeAffiche.titre) }
-    var Kilometrage by remember { mutableIntStateOf(vehiculeAffiche.kilometrage) }
-    var Prix by remember { mutableStateOf(vehiculeAffiche.prix) }
-    var Image by remember { mutableIntStateOf(vehiculeAffiche.image) }
+    var titre by remember { mutableStateOf(vehiculeAffiche.titre) }
+    var kilometrage by remember { mutableIntStateOf(vehiculeAffiche.kilometrage) }
+    var prix by remember { mutableIntStateOf(vehiculeAffiche.prix) }
+    var image by remember { mutableIntStateOf(vehiculeAffiche.image) }
     Column(
         modifier = Modifier.fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally
@@ -204,7 +213,7 @@ fun ModeDefaut(
                     .border(width = 3.dp, color = MaterialTheme.colorScheme.secondary),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Text(Titre, modifier = Modifier.padding(0.dp, 5.dp))
+                Text(titre, modifier = Modifier.padding(0.dp, 5.dp))
             }
 
             Column(
@@ -217,9 +226,9 @@ fun ModeDefaut(
                 ) {
                     Column {
                         Text(
-                            "Kilometrage : $Kilometrage", modifier = Modifier.padding(5.dp, 0.dp)
+                            "Kilometrage : $kilometrage", modifier = Modifier.padding(5.dp, 0.dp)
                         )
-                        Text("Prix : $Prix", modifier = Modifier.padding(5.dp, 0.dp))
+                        Text("Prix : $prix", modifier = Modifier.padding(5.dp, 0.dp))
                     }
 
                 }
@@ -230,8 +239,8 @@ fun ModeDefaut(
                         .fillMaxWidth()
                 ) {
                     Image(
-                        painter = painterResource(Image),
-                        contentDescription = Titre,
+                        painter = painterResource(image),
+                        contentDescription = titre,
                         contentScale = ContentScale.Crop,
                         modifier = Modifier.fillMaxWidth()
                     )
@@ -251,7 +260,7 @@ fun ModeDefaut(
             Button(
                 onClick = {
                     onChangeActionEnCours(ActionPossibleModification.SUPPRESSION)
-                    Fonctions.SupprimerVehiculeSelonId(vehiculeAffiche.id)
+                    vehiculeViewModel.delete(vehiculeAffiche)
                 },
                 colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.secondary)
             ) {

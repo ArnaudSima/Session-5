@@ -12,31 +12,29 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import com.example.myapplication.View.Enums.EcransPageConnexion
+import com.example.myapplication.Data.Vehicule.Vehicule
+import com.example.myapplication.Data.utilisateur.Utilisateur
+import com.example.myapplication.MiddleWare.VehiculeViewModel
 import com.example.myapplication.View.Routes
 
 @Composable
-fun DashBoard(navController: NavController, onChangeId: (Int) -> Unit) {
-    val context = LocalContext.current
-
-    var idSelectionne by remember { mutableIntStateOf(1) }
-    var ecransPageConnexion by remember { mutableStateOf(EcransPageConnexion.LISTE) }
-
-
-    ListeVehicules(
-        navController,
-        onChangeId = { onChangeId(it) })
+fun DashBoard(navController: NavController, onChangeIdVehicule: (Int) -> Unit, vehiculeViewModel: VehiculeViewModel,idUtilisateur: Int) {
+    val listeVehiculesNullable = vehiculeViewModel.getVehiculeDeUtilisateur(idUtilisateur)?.collectAsState(initial = emptyList())?.value
+    val listeVehicules : List<Vehicule>
+    if(listeVehiculesNullable != null){
+        listeVehicules = listeVehiculesNullable
+        ListeVehicules(
+            navController,
+            onChangeIdVehicule = { onChangeIdVehicule(it) },
+            listeVehicules
+        )
+    }
 
 
 }
@@ -44,13 +42,14 @@ fun DashBoard(navController: NavController, onChangeId: (Int) -> Unit) {
 @Composable
 fun ListeVehicules(
     navController: NavController,
-    onChangeId: (Int) -> Unit,
+    onChangeIdVehicule: (Int) -> Unit,
+    listeVehicules : List<Vehicule>
 ) {
     LazyColumn {
         items(items = listeVehicules) { vehicule ->
             Column(modifier = Modifier.clickable(onClick = {
                 navController.navigate(Routes.Modification.route)
-                onChangeId(vehicule.id)
+                onChangeIdVehicule(vehicule.idVehicule)
             })) {
                 Text(vehicule.titre)
                 Text(vehicule.kilometrage.toString())
