@@ -26,7 +26,7 @@ abstract class VintageExpertBD : RoomDatabase() {
                 Room.databaseBuilder(context.applicationContext,
                     VintageExpertBD::class.java,
                     "vintage_expert_bd"
-                ).build().also { Instance = it }
+                ).allowMainThreadQueries().build().also { Instance = it }
             }
             return Instance
 

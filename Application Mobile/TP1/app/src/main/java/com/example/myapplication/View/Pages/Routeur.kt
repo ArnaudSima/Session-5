@@ -7,6 +7,7 @@ import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -63,7 +64,7 @@ class Routeur : ComponentActivity() {
 
 
                     )
-            }) { padding ->
+            }, bottomBar = BottomAppBar(tit  )) { padding ->
                 Navigation(modifier = Modifier.padding(padding))
 
             }

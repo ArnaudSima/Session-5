@@ -33,20 +33,17 @@ class UtilisateurViewModel(application: Application) : AndroidViewModel(applicat
 
 
     fun add(utilisateur: Utilisateur) = viewModelScope.launch {
-        viewModelScope.launch(Dispatchers.IO) {
             dao?.insert(utilisateur)
-        }
+
     }
 
     fun update(utilisateur: Utilisateur) = viewModelScope.launch {
-        viewModelScope.launch(Dispatchers.IO) {
             dao?.update(utilisateur)
-        }
+
     }
 
     fun delete(utilisateur: Utilisateur) = viewModelScope.launch {
-        viewModelScope.launch(Dispatchers.IO) {
             dao?.delete(utilisateur)
-        }
+
     }
 }
