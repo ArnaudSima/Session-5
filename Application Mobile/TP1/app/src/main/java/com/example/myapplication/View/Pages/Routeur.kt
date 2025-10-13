@@ -7,7 +7,6 @@ import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -15,6 +14,9 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
@@ -26,6 +28,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.myapplication.MiddleWare.UtilisateurViewModel
 import com.example.myapplication.MiddleWare.VehiculeViewModel
+import com.example.myapplication.View.Enums.BottomBar
 import com.example.myapplication.View.Routes
 
 val fontFamily = FontFamily(
@@ -36,8 +39,10 @@ val fontFamily = FontFamily(
 )
 private var idUtilisateur = 0
 private var idVehiculeAffiche = 0;
+private var bottomBarAffiche by mutableStateOf(BottomBar.DEFAULT)
 
 class Routeur : ComponentActivity() {
+
     private val vehiculeViewModel: VehiculeViewModel by viewModels()
     private val utilisateurViewModel: UtilisateurViewModel by viewModels()
 
@@ -64,7 +69,8 @@ class Routeur : ComponentActivity() {
 
 
                     )
-            }, bottomBar = BottomAppBar(tit  )) { padding ->
+            }
+            ) { padding ->
                 Navigation(modifier = Modifier.padding(padding))
 
             }
@@ -74,6 +80,7 @@ class Routeur : ComponentActivity() {
 
     @Composable
     fun Navigation(modifier: Modifier) {
+
         val navController = rememberNavController()
 
         Box(modifier = modifier) {
@@ -81,14 +88,16 @@ class Routeur : ComponentActivity() {
                 navController = navController,
                 startDestination = Routes.Accueil.route
             ) {
-                composable(route = Routes.Accueil.route){
+                composable(route = Routes.Accueil.route) {
                     Accueil(navController)
                 }
                 composable(route = Routes.Connexion.route) {
                     Connexion(
                         navController,
                         utilisateurViewModel,
-                        onChangeIdUtilisateur = { idUtilisateur = it })
+                        onChangeIdUtilisateur = { idUtilisateur = it },
+                        onChangeBottomBar = { bottomBarAffiche = it }
+                    )
                 }
                 composable(route = Routes.DashBoard.route) {
                     DashBoard(
@@ -104,13 +113,16 @@ class Routeur : ComponentActivity() {
                         vehiculeViewModel,
                         idVehiculeAffiche,
                         idUtilisateur
-                        )
+                    )
                 }
                 composable(route = Routes.Inscription.route) {
                     Inscription(
                         navController,
                         utilisateurViewModel,
                         onChangeIdUtilisateur = { idUtilisateur = it })
+                }
+                composable(route = Routes.Ajout.route) {
+                    AjoutVehicule(navController, vehiculeViewModel, idUtilisateur)
                 }
             }
         }

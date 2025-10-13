@@ -19,7 +19,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -33,7 +32,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.myapplication.Data.utilisateur.Utilisateur
 import com.example.myapplication.MiddleWare.UtilisateurViewModel
-import com.example.myapplication.MiddleWare.VehiculeViewModel
+import com.example.myapplication.View.Enums.BottomBar
 import com.example.myapplication.View.Routes
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -42,7 +41,8 @@ import com.example.myapplication.View.Routes
 fun Connexion(
     navController: NavController,
     viewModel: UtilisateurViewModel,
-    onChangeIdUtilisateur: (Int) -> Unit
+    onChangeIdUtilisateur: (Int) -> Unit,
+    onChangeBottomBar: (BottomBar) -> Unit
 ) {
     val motDePasse = remember { mutableStateOf("") }
     val nomUtilisateur = remember { mutableStateOf("") }
@@ -142,14 +142,16 @@ fun Connexion(
 
         Button(
             content = { Text("Se connecter", fontSize = 20.sp) }, onClick = {
-                ConnecterUtilisateur(
-                    TAG = TAG,
+                connecterUtilisateur(
+                    tag = TAG,
                     viewModel = viewModel,
                     nomUtilisateur = nomUtilisateur.value,
-                    motDePasse = motDePasse.value.toInt(),
+                    motDePasse = motDePasse.value,
                     onChangeIdUtilisateur = { onChangeIdUtilisateur(it) },
-                    onChangeRoute = {navController.navigate(it)},
-                    context = Context)
+                    onChangeRoute = { navController.navigate(it) },
+                    context = Context,
+                    onChangeBottomBar = { onChangeBottomBar(it) }
+                )
 
             }, colors = ButtonColors(
                 containerColor = MaterialTheme.colorScheme.secondary,
@@ -161,30 +163,41 @@ fun Connexion(
     }
 }
 
-fun ConnecterUtilisateur(
-    TAG: String,
+fun connecterUtilisateur(
+    tag: String,
     viewModel: UtilisateurViewModel,
     nomUtilisateur: String,
-    motDePasse: Int,
+    motDePasse: String,
     onChangeIdUtilisateur: (Int) -> Unit,
     onChangeRoute: (String) -> Unit,
-    context: Context
-) {
-    var messageUtilisateur ="Mauvais mot de passe ou nom d'utilisateur"
+    context: Context,
+    onChangeBottomBar: (BottomBar) -> Unit
 
-    Log.d(TAG, "Valeur nom utilisateur : ${nomUtilisateur}")
-    Log.d(TAG, "Valeur mot de passe : ${motDePasse}")
-    //doit etre une coroutine
-    val utilisateur: Utilisateur? = viewModel.verifierIdentifiants(nomUtilisateur = nomUtilisateur, motDePasse = motDePasse)
-    Log.d(TAG, "Utilisateur qui se connecte : $utilisateur")
+) {
+    var messageUtilisateur = "Mauvais mot de passe ou nom d'utilisateur"
+
+    Log.d(tag, "Valeur nom utilisateur : ${nomUtilisateur}")
+    Log.d(tag, "Valeur mot de passe : ${motDePasse}")
+    if (motDePasse.trim().isEmpty()) {
+        messageUtilisateur = "Mauvais mot de passe ou nom d'utilisateur"
+        Toast.makeText(context, messageUtilisateur, Toast.LENGTH_SHORT).show()
+        return
+    }
+    val motDePasseInteger = motDePasse.toInt()
+    val utilisateur: Utilisateur? =
+        viewModel.verifierIdentifiants(
+            nomUtilisateur = nomUtilisateur,
+            motDePasse = motDePasseInteger
+        )
     if (utilisateur != null) {
         onChangeIdUtilisateur(utilisateur.idUtilisateur)
         messageUtilisateur = "Connexion en cours..."
+        onChangeBottomBar(BottomBar.DASHBOARD)
         onChangeRoute(Routes.DashBoard.route)
-    } else {
-        messageUtilisateur = "Mauvais mot de passe ou nom d'utilisateur"
+        Log.d(tag, "Utilisateur qui se connecte : $utilisateur")
+        Toast.makeText(context, messageUtilisateur, Toast.LENGTH_SHORT).show()
     }
-    val toast = Toast.makeText(context, messageUtilisateur, Toast.LENGTH_SHORT)
-    toast.show()
+
+
 }
 

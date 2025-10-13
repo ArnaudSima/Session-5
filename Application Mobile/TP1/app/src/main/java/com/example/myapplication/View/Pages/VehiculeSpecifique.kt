@@ -1,4 +1,5 @@
 package com.example.myapplication.View.Pages
+
 import android.content.Context
 import android.widget.Toast
 import androidx.compose.foundation.Image
@@ -34,6 +35,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.core.text.isDigitsOnly
 import androidx.navigation.NavController
+import coil.compose.rememberAsyncImagePainter
 import com.example.myapplication.Data.Vehicule.Vehicule
 import com.example.myapplication.Data.utilisateur.Utilisateur
 import com.example.myapplication.MiddleWare.VehiculeViewModel
@@ -41,14 +43,21 @@ import com.example.myapplication.View.Enums.ActionPossibleModification
 import com.example.myapplication.View.Routes
 
 @Composable
-fun AffichageVehiculeSpecifique(navController: NavController, vehiculeViewModel: VehiculeViewModel, idVehiculeAffiche : Int,idUtilisateur: Int) {
+fun AffichageVehiculeSpecifique(
+    navController: NavController,
+    vehiculeViewModel: VehiculeViewModel,
+    idVehiculeAffiche: Int,
+    idUtilisateur: Int
+) {
     var actionEnCours by remember { mutableStateOf(ActionPossibleModification.DEFAUT) }
     val context = LocalContext.current
-    val vehiculeAfficheNullable = vehiculeViewModel.getVehiculeById(idVehiculeAffiche).collectAsState(initial = null).value
-    var vehiculeAffiche = Vehicule(0,"default", 0,0,0,0)
-    if (vehiculeAfficheNullable != null){
-        vehiculeAffiche = vehiculeAfficheNullable
+    val vehiculeAfficheNullable =
+        vehiculeViewModel.getVehiculeById(idVehiculeAffiche).collectAsState(initial = null).value
+
+    if (vehiculeAfficheNullable == null) {
+        return
     }
+    val vehiculeAffiche : Vehicule = vehiculeAfficheNullable
     when (actionEnCours) {
         ActionPossibleModification.DEFAUT ->
             ModeDefaut(
@@ -56,7 +65,8 @@ fun AffichageVehiculeSpecifique(navController: NavController, vehiculeViewModel:
                 vehiculeAffiche,
                 context,
                 onChangeActionEnCours = { actionEnCours = it },
-                vehiculeViewModel)
+                vehiculeViewModel
+            )
 
         ActionPossibleModification.MODIFICATION ->
             ModeModification(
@@ -65,7 +75,7 @@ fun AffichageVehiculeSpecifique(navController: NavController, vehiculeViewModel:
                 onChangeActionEnCours = { actionEnCours = it },
                 vehiculeViewModel,
                 idUtilisateur
-                )
+            )
 
         ActionPossibleModification.SUPPRESSION -> ModeSuppression()
     }
@@ -83,7 +93,7 @@ fun ModeModification(
     var titre by remember { mutableStateOf(vehiculeAffiche.titre) }
     var kilometrage by remember { mutableIntStateOf(vehiculeAffiche.kilometrage) }
     var prix by remember { mutableIntStateOf(vehiculeAffiche.prix) }
-    var image by remember { mutableIntStateOf(vehiculeAffiche.image) }
+    var image by remember { mutableStateOf(vehiculeAffiche.image) }
     Column(
         modifier = Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.Center,
@@ -145,7 +155,9 @@ fun ModeModification(
                     .fillMaxWidth(), contentAlignment = Alignment.Center
             ) {
                 Image(
-                    painter = painterResource(image),
+                    painter = rememberAsyncImagePainter(
+                        model = vehiculeAffiche.image
+                    ),
                     contentDescription = titre,
                     contentScale = ContentScale.Crop,
                     modifier = Modifier
@@ -162,7 +174,13 @@ fun ModeModification(
         }
         Row {
             Button(onClick = {
-                val vehicule = Vehicule(titre =  titre, kilometrage =  kilometrage, image =  image, prix =  prix, idUtilisateur = idUtilisateur)
+                val vehicule = Vehicule(
+                    titre = titre,
+                    kilometrage = kilometrage,
+                    image = image,
+                    prix = prix,
+                    idUtilisateur = idUtilisateur
+                )
                 vehiculeViewModel.update(vehicule)
                 onChangeActionEnCours(ActionPossibleModification.DEFAUT)
             }) { Text("Enregistrer") }
@@ -184,7 +202,7 @@ fun ModeDefaut(
     var titre by remember { mutableStateOf(vehiculeAffiche.titre) }
     var kilometrage by remember { mutableIntStateOf(vehiculeAffiche.kilometrage) }
     var prix by remember { mutableIntStateOf(vehiculeAffiche.prix) }
-    var image by remember { mutableIntStateOf(vehiculeAffiche.image) }
+    var image by remember { mutableStateOf(vehiculeAffiche.image) }
     Column(
         modifier = Modifier.fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally
@@ -239,7 +257,9 @@ fun ModeDefaut(
                         .fillMaxWidth()
                 ) {
                     Image(
-                        painter = painterResource(image),
+                        painter = rememberAsyncImagePainter(
+                            model = vehiculeAffiche.image
+                        ),
                         contentDescription = titre,
                         contentScale = ContentScale.Crop,
                         modifier = Modifier.fillMaxWidth()

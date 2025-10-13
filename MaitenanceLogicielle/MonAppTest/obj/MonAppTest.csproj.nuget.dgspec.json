@@ -1,23 +1,23 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\2267339\\Documents\\GitHub\\Session-5\\MaitenanceLogicielle\\MonAppTest\\MonAppTest.csproj": {}
+    "C:\\Users\\Arnaud\\Documents\\GitHub\\Session-5\\MaitenanceLogicielle\\MonAppTest\\MonAppTest.csproj": {}
   },
   "projects": {
-    "C:\\Users\\2267339\\Documents\\GitHub\\Session-5\\MaitenanceLogicielle\\MonAppTest\\MonAppTest.csproj": {
+    "C:\\Users\\Arnaud\\Documents\\GitHub\\Session-5\\MaitenanceLogicielle\\MonAppTest\\MonAppTest.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\2267339\\Documents\\GitHub\\Session-5\\MaitenanceLogicielle\\MonAppTest\\MonAppTest.csproj",
+        "projectUniqueName": "C:\\Users\\Arnaud\\Documents\\GitHub\\Session-5\\MaitenanceLogicielle\\MonAppTest\\MonAppTest.csproj",
         "projectName": "MonAppTest",
-        "projectPath": "C:\\Users\\2267339\\Documents\\GitHub\\Session-5\\MaitenanceLogicielle\\MonAppTest\\MonAppTest.csproj",
-        "packagesPath": "C:\\Users\\2267339\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\2267339\\Documents\\GitHub\\Session-5\\MaitenanceLogicielle\\MonAppTest\\obj\\",
+        "projectPath": "C:\\Users\\Arnaud\\Documents\\GitHub\\Session-5\\MaitenanceLogicielle\\MonAppTest\\MonAppTest.csproj",
+        "packagesPath": "C:\\Users\\Arnaud\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\Arnaud\\Documents\\GitHub\\Session-5\\MaitenanceLogicielle\\MonAppTest\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
         ],
         "configFilePaths": [
-          "C:\\Users\\2267339\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\Arnaud\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
@@ -32,8 +32,8 @@
           "net9.0": {
             "targetAlias": "net9.0",
             "projectReferences": {
-              "C:\\Users\\2267339\\Documents\\GitHub\\Session-5\\MaitenanceLogicielle\\MonApp\\MonApp.csproj": {
-                "projectPath": "C:\\Users\\2267339\\Documents\\GitHub\\Session-5\\MaitenanceLogicielle\\MonApp\\MonApp.csproj"
+              "C:\\Users\\Arnaud\\Documents\\GitHub\\Session-5\\MaitenanceLogicielle\\MonApp\\MonApp.csproj": {
+                "projectPath": "C:\\Users\\Arnaud\\Documents\\GitHub\\Session-5\\MaitenanceLogicielle\\MonApp\\MonApp.csproj"
               }
             }
           }
@@ -87,24 +87,24 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.304/PortableRuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.305/PortableRuntimeIdentifierGraph.json"
         }
       }
     },
-    "C:\\Users\\2267339\\Documents\\GitHub\\Session-5\\MaitenanceLogicielle\\MonApp\\MonApp.csproj": {
+    "C:\\Users\\Arnaud\\Documents\\GitHub\\Session-5\\MaitenanceLogicielle\\MonApp\\MonApp.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\2267339\\Documents\\GitHub\\Session-5\\MaitenanceLogicielle\\MonApp\\MonApp.csproj",
+        "projectUniqueName": "C:\\Users\\Arnaud\\Documents\\GitHub\\Session-5\\MaitenanceLogicielle\\MonApp\\MonApp.csproj",
         "projectName": "MonApp",
-        "projectPath": "C:\\Users\\2267339\\Documents\\GitHub\\Session-5\\MaitenanceLogicielle\\MonApp\\MonApp.csproj",
-        "packagesPath": "C:\\Users\\2267339\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\2267339\\Documents\\GitHub\\Session-5\\MaitenanceLogicielle\\MonApp\\obj\\",
+        "projectPath": "C:\\Users\\Arnaud\\Documents\\GitHub\\Session-5\\MaitenanceLogicielle\\MonApp\\MonApp.csproj",
+        "packagesPath": "C:\\Users\\Arnaud\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\Arnaud\\Documents\\GitHub\\Session-5\\MaitenanceLogicielle\\MonApp\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
         ],
         "configFilePaths": [
-          "C:\\Users\\2267339\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\Arnaud\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
@@ -152,7 +152,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.304/PortableRuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.305/PortableRuntimeIdentifierGraph.json"
         }
       }
     }

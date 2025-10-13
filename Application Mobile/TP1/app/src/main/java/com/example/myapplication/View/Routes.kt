@@ -6,4 +6,5 @@ sealed class Routes(val route : String){
     object Inscription : Routes("inscription")
     object DashBoard : Routes("dash_board")
     object Modification : Routes("modification")
+    object Ajout : Routes("ajout")
 }

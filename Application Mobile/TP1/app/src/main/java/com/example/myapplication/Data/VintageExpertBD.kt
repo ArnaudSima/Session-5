@@ -12,21 +12,25 @@ import com.example.myapplication.Data.utilisateur.UtilisateurDao
 
 @Database(
     entities = [Vehicule::class, Utilisateur::class],
-    version = 1,
+    version = 2,
     exportSchema = false
 )
 abstract class VintageExpertBD : RoomDatabase() {
     abstract fun VehiculesDao(): VehiculesDao
     abstract fun UtilisateurDao(): UtilisateurDao
-    companion object{
+
+    companion object {
         @Volatile
-        private var Instance : VintageExpertBD? = null;
-        fun getDatabase(context : Context): VintageExpertBD?{
-            Instance ?: synchronized(this){
-                Room.databaseBuilder(context.applicationContext,
+        private var Instance: VintageExpertBD? = null;
+        fun getDatabase(context: Context): VintageExpertBD? {
+            Instance ?: synchronized(this) {
+                Room.databaseBuilder(
+                    context.applicationContext,
                     VintageExpertBD::class.java,
                     "vintage_expert_bd"
-                ).allowMainThreadQueries().build().also { Instance = it }
+                ).allowMainThreadQueries()
+                    .fallbackToDestructiveMigration(true) // <-- Supprime et reconstruit la DB
+                    .build().also { Instance = it }
             }
             return Instance
 

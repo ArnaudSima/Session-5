@@ -19,7 +19,7 @@ data class Vehicule(
     val idVehicule: Int = 0,
     var titre: String,
     var kilometrage: Int,
-    var image: Int,
+    var image: String,
     var prix: Int,
     @ColumnInfo(index = true)
     val idUtilisateur: Int

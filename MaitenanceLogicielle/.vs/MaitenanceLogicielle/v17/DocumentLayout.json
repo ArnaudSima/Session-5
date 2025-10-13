@@ -1,0 +1,41 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "C:\\Users\\Arnaud\\Documents\\GitHub\\Session-5\\MaitenanceLogicielle\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{BCCB1001-8E48-8CF8-EB3B-9326E5CA8C11}|MonApp\\MonApp.csproj|c:\\users\\arnaud\\documents\\github\\session-5\\maitenancelogicielle\\monapp\\monapp.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{BCCB1001-8E48-8CF8-EB3B-9326E5CA8C11}|MonApp\\MonApp.csproj|solutionrelative:monapp\\monapp.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 0,
+          "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "MonApp.cs",
+              "DocumentMoniker": "C:\\Users\\Arnaud\\Documents\\GitHub\\Session-5\\MaitenanceLogicielle\\MonApp\\MonApp.cs",
+              "RelativeDocumentMoniker": "MonApp\\MonApp.cs",
+              "ToolTip": "C:\\Users\\Arnaud\\Documents\\GitHub\\Session-5\\MaitenanceLogicielle\\MonApp\\MonApp.cs",
+              "RelativeToolTip": "MonApp\\MonApp.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAgAAAAlAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-10-12T18:04:00.802Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{cce594b6-0c39-4442-ba28-10c64ac7e89f}"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
