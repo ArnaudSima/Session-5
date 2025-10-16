@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Vintage Expert</string> <!-- garde ce nom -->
     <string name="bienvenue">Bienvenue</string>
@@ -19,12 +20,8 @@
     <string name="prix">Prix : %1$d</string>
     <string name="supprimer">Supprimer</string>
     <string name="mauvais_mot_de_passe_ou_nom_d_utilisateur_connexion">Mauvais mot de passe ou nom d\'utilisateur</string>
-    <string name="connexion">Connexion</string>
-    <string name="nom_utilisateur">Nom utilisateur</string>
     <string name="se_connecter_connexion">Se connecter</string>
     <string name="connexion_en_cours">Connexion en cours...</string>
-    <string name="mot_de_passe">Mot de passe</string>
-    <string name="s_inscrire_inscription">S\'Inscrire</string>
     <string name="nom_utilisateur_inscription">Nom utilisateur</string>
     <string name="mot_de_passe_inscription">Mot de passe</string>
     <string name="modele">Modele : %1$s</string>

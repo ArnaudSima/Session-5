@@ -1,7 +1,12 @@
 package com.example.myapplication.View.Pages
 
+import android.content.ContentValues
 import android.content.Context
+import android.provider.MediaStore
+import android.util.Log
 import android.widget.Toast
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -32,13 +37,16 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.core.text.isDigitsOnly
 import androidx.navigation.NavController
+import coil.compose.AsyncImage
 import coil.compose.rememberAsyncImagePainter
 import com.example.myapplication.Data.Vehicule.Vehicule
 import com.example.myapplication.Data.utilisateur.Utilisateur
 import com.example.myapplication.MiddleWare.VehiculeViewModel
+import com.example.myapplication.R
 import com.example.myapplication.View.Enums.ActionPossibleModification
 import com.example.myapplication.View.Routes
 
@@ -51,34 +59,40 @@ fun AffichageVehiculeSpecifique(
 ) {
     var actionEnCours by remember { mutableStateOf(ActionPossibleModification.DEFAUT) }
     val context = LocalContext.current
-    val vehiculeAfficheNullable =
-        vehiculeViewModel.getVehiculeById(idVehiculeAffiche).collectAsState(initial = null).value
-
-    if (vehiculeAfficheNullable == null) {
+    if (actionEnCours == ActionPossibleModification.SUPPRESSION) {
+        ModeSuppression()
         return
     }
-    val vehiculeAffiche : Vehicule = vehiculeAfficheNullable
-    when (actionEnCours) {
-        ActionPossibleModification.DEFAUT ->
-            ModeDefaut(
-                navController,
-                vehiculeAffiche,
-                context,
-                onChangeActionEnCours = { actionEnCours = it },
-                vehiculeViewModel
-            )
-
-        ActionPossibleModification.MODIFICATION ->
-            ModeModification(
-                vehiculeAffiche,
-                context,
-                onChangeActionEnCours = { actionEnCours = it },
-                vehiculeViewModel,
-                idUtilisateur
-            )
-
-        ActionPossibleModification.SUPPRESSION -> ModeSuppression()
+    val vehiculeAfficheFlow = remember(idVehiculeAffiche) {
+        vehiculeViewModel.getVehiculeById(idVehiculeAffiche)
     }
+
+    val vehiculeAfficheNullable = vehiculeAfficheFlow.collectAsState(initial = null).value
+    var vehiculeAffiche: Vehicule
+    if (vehiculeAfficheNullable != null) {
+        vehiculeAffiche = vehiculeAfficheNullable
+    } else {
+        return
+    }
+
+
+    if (actionEnCours == ActionPossibleModification.DEFAUT) {
+        ModeDefaut(
+            vehiculeAffiche,
+            onChangeActionEnCours = { actionEnCours = it },
+            vehiculeViewModel,
+            context
+        )
+    } else if (actionEnCours == ActionPossibleModification.MODIFICATION) {
+        ModeModification(
+            vehiculeAffiche,
+            context,
+            onChangeActionEnCours = { actionEnCours = it },
+            vehiculeViewModel,
+            idUtilisateur
+        )
+    }
+
 
 }
 
@@ -91,17 +105,38 @@ fun ModeModification(
     idUtilisateur: Int
 ) {
     var titre by remember { mutableStateOf(vehiculeAffiche.titre) }
-    var kilometrage by remember { mutableIntStateOf(vehiculeAffiche.kilometrage) }
-    var prix by remember { mutableIntStateOf(vehiculeAffiche.prix) }
+    var kilometrage by remember { mutableStateOf(vehiculeAffiche.kilometrage.toString()) }
+    var prix by remember { mutableStateOf(vehiculeAffiche.prix.toString()) }
     var image by remember { mutableStateOf(vehiculeAffiche.image) }
+    val photoUri by remember {
+        mutableStateOf(
+            context.contentResolver.insert(
+                MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
+                ContentValues().apply {
+                    put(MediaStore.Images.Media.MIME_TYPE, "image/jpeg")
+                    put(
+                        MediaStore.Images.Media.DISPLAY_NAME,
+                        "photo_${System.currentTimeMillis()}.jpg"
+                    )
+                }
+            )
+        )
+    }
+    val takePicture = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.TakePicture(),
+        onResult = { success ->
+            if (success) {
+                Toast.makeText(context,
+                    context.getString(R.string.photo_prise_avec_succ_s), Toast.LENGTH_SHORT).show()
+                image = photoUri.toString()
+            }
+        }
+    )
     Column(
         modifier = Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        //a finir negro
-        val mauvaisInput =
-            Toast.makeText(context, "Le placeholder doit etre un entier!", Toast.LENGTH_SHORT)
         Column(
             Modifier
                 .border(
@@ -129,19 +164,11 @@ fun ModeModification(
                     modifier = Modifier.fillMaxWidth()
                 ) {
                     Column {
-                        TextField(value = "$kilometrage", onValueChange = {
-                            if (it.isDigitsOnly()) {
-                                kilometrage = it.toInt()
-                            } else {
-                                mauvaisInput.show()
-                            }
+                        TextField(value = kilometrage, onValueChange = {
+                            kilometrage = it
                         }, modifier = Modifier.padding(5.dp, 0.dp))
-                        TextField(value = "$prix", onValueChange = {
-                            if (it.isDigitsOnly()) {
-                                prix = it.toInt()
-                            } else {
-                                mauvaisInput.show()
-                            }
+                        TextField(value = prix, onValueChange = {
+                            prix = it
                         }, modifier = Modifier.padding(5.dp, 0.dp))
                     }
 
@@ -154,10 +181,8 @@ fun ModeModification(
                     .weight(1f)
                     .fillMaxWidth(), contentAlignment = Alignment.Center
             ) {
-                Image(
-                    painter = rememberAsyncImagePainter(
-                        model = vehiculeAffiche.image
-                    ),
+                AsyncImage(
+                    model = image,
                     contentDescription = titre,
                     contentScale = ContentScale.Crop,
                     modifier = Modifier
@@ -165,26 +190,27 @@ fun ModeModification(
                         .alpha(0.5f)
                 )
                 Button(
-                    onClick = { }, modifier = Modifier
+                    onClick = { if (photoUri != null) {
+                        takePicture.launch(photoUri!!)
+                    }
+
+                    }, modifier = Modifier
                 ) {
-                    Text("Modifier Image")
+                    Text(stringResource(R.string.modifier_image))
                 }
             }
 
         }
         Row {
             Button(onClick = {
-                val vehicule = Vehicule(
-                    titre = titre,
-                    kilometrage = kilometrage,
-                    image = image,
-                    prix = prix,
-                    idUtilisateur = idUtilisateur
-                )
-                vehiculeViewModel.update(vehicule)
+                ModifierVehicule(vehiculeAffiche.idVehicule, titre,kilometrage,image,prix,idUtilisateur,context,vehiculeViewModel)
                 onChangeActionEnCours(ActionPossibleModification.DEFAUT)
-            }) { Text("Enregistrer") }
-            Button(onClick = { onChangeActionEnCours(ActionPossibleModification.DEFAUT) }) { Text("Annuler") }
+            }) { Text(stringResource(R.string.enregistrer_vehicule)) }
+            Button(onClick = { onChangeActionEnCours(ActionPossibleModification.DEFAUT) }) {
+                Text(
+                    stringResource(R.string.annuler)
+                )
+            }
         }
     }
 
@@ -193,30 +219,20 @@ fun ModeModification(
 @Composable
 
 fun ModeDefaut(
-    navController: NavController,
     vehiculeAffiche: Vehicule,
-    context: Context,
     onChangeActionEnCours: (ActionPossibleModification) -> Unit,
-    vehiculeViewModel: VehiculeViewModel
+    vehiculeViewModel: VehiculeViewModel,
+    context : Context
 ) {
     var titre by remember { mutableStateOf(vehiculeAffiche.titre) }
     var kilometrage by remember { mutableIntStateOf(vehiculeAffiche.kilometrage) }
     var prix by remember { mutableIntStateOf(vehiculeAffiche.prix) }
-    var image by remember { mutableStateOf(vehiculeAffiche.image) }
     Column(
         modifier = Modifier.fillMaxSize(),
-        horizontalAlignment = Alignment.CenterHorizontally
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
     ) {
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(200.dp)
-        ) {
-            Button(
-                onClick = { navController.navigate(Routes.DashBoard.route) },
-                colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.secondary)
-            ) { Text("Retourner") }
-        }
+
         Column(
             Modifier
                 .border(
@@ -244,9 +260,13 @@ fun ModeDefaut(
                 ) {
                     Column {
                         Text(
-                            "Kilometrage : $kilometrage", modifier = Modifier.padding(5.dp, 0.dp)
+                            stringResource(R.string.kilometrage, kilometrage),
+                            modifier = Modifier.padding(5.dp, 0.dp)
                         )
-                        Text("Prix : $prix", modifier = Modifier.padding(5.dp, 0.dp))
+                        Text(
+                            stringResource(R.string.prix, prix),
+                            modifier = Modifier.padding(5.dp, 0.dp)
+                        )
                     }
 
                 }
@@ -256,10 +276,8 @@ fun ModeDefaut(
                         .weight(1f)
                         .fillMaxWidth()
                 ) {
-                    Image(
-                        painter = rememberAsyncImagePainter(
-                            model = vehiculeAffiche.image
-                        ),
+                    AsyncImage(
+                        model = vehiculeAffiche.image,
                         contentDescription = titre,
                         contentScale = ContentScale.Crop,
                         modifier = Modifier.fillMaxWidth()
@@ -276,16 +294,18 @@ fun ModeDefaut(
                     onChangeActionEnCours(ActionPossibleModification.MODIFICATION)
                 },
                 colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.secondary)
-            ) { Text("Modifier") }
+            ) { Text(stringResource(R.string.modifier)) }
             Button(
                 onClick = {
+                    vehiculeViewModel.delete(vehicule = vehiculeAffiche)
                     onChangeActionEnCours(ActionPossibleModification.SUPPRESSION)
-                    vehiculeViewModel.delete(vehiculeAffiche)
+                    Toast.makeText(context,
+                        context.getString(R.string.entree_supprim_avec_succ_s), Toast.LENGTH_SHORT).show()
                 },
                 colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.secondary)
             ) {
                 Text(
-                    "Supprimer"
+                    stringResource(R.string.supprimer)
                 )
             }
         }
@@ -299,5 +319,45 @@ fun ModeSuppression() {
         modifier = Modifier.fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
-    ) { Text("Vehicule supprime") }
+    ) { Text(stringResource(R.string.vehicule_supprime)) }
+}
+
+fun ModifierVehicule(
+    idVehicule: Int,
+    titre: String,
+    kilometrage: String,
+    image: String,
+    prix: String,
+    idUtilisateur: Int,
+    context: Context,
+    vehiculeViewModel: VehiculeViewModel
+) {
+    if (!kilometrage.isDigitsOnly() || kilometrage.isEmpty()) {
+        Toast.makeText(context,
+            context.getString(R.string.le_kilometrage_doit_etre_un_entier_numerique), Toast.LENGTH_SHORT)
+            .show()
+        return
+    }
+    if (!prix.isDigitsOnly() || prix.isEmpty()) {
+        Toast.makeText(context,
+            context.getString(R.string.le_prix_doit_etre_un_entier_numerique), Toast.LENGTH_SHORT).show()
+        return
+    }
+    if (image.isEmpty()) {
+        Toast.makeText(context, context.getString(R.string.il_manque_une_image), Toast.LENGTH_SHORT).show()
+        return
+    }
+
+    val vehicule = Vehicule(
+        idVehicule = idVehicule,
+        titre = titre,
+        kilometrage = kilometrage.toInt(),
+        image = image,
+        prix = prix.toInt(),
+        idUtilisateur = idUtilisateur
+    )
+    Log.d("VehiculeSpecifique","${vehicule.idVehicule}${vehicule.kilometrage}${vehicule.image}${vehicule.prix}${vehicule.idUtilisateur}")
+    Toast.makeText(context,
+        context.getString(R.string.vehicule_modifi_avec_succ_s), Toast.LENGTH_SHORT).show()
+    vehiculeViewModel.update(vehicule)
 }

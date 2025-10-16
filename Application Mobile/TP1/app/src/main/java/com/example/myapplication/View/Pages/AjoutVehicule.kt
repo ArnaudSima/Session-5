@@ -1,7 +1,10 @@
 package com.example.myapplication.View.Pages
 
+import android.R
 import android.content.ContentValues
+import android.content.Context
 import android.provider.MediaStore
+import android.util.Log
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -28,12 +31,21 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.core.text.isDigitsOnly
 import androidx.navigation.NavController
+import coil.compose.AsyncImage
 import com.example.myapplication.Data.Vehicule.Vehicule
+import com.example.myapplication.MiddleWare.UtilisateurViewModel
 import com.example.myapplication.MiddleWare.VehiculeViewModel
+import com.example.myapplication.View.Routes
+import com.example.myapplication.View.navigationManuelle
+import com.example.myapplication.View.routeActuelle
 
 @Composable
 fun AjoutVehicule(
@@ -43,8 +55,8 @@ fun AjoutVehicule(
 ) {
 
     var titre by remember { mutableStateOf("") }
-    var kilometrage by remember { mutableIntStateOf(0) }
-    var prix by remember { mutableIntStateOf(0) }
+    var kilometrage by remember { mutableStateOf("") }
+    var prix by remember { mutableStateOf("") }
     var image by remember { mutableStateOf("") }
     val context = LocalContext.current
     val photoUri by remember {
@@ -65,7 +77,7 @@ fun AjoutVehicule(
         contract = ActivityResultContracts.TakePicture(),
         onResult = { success ->
             if (success) {
-                Toast.makeText(context, "Photo prise avec succès!", Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, context.getString(com.example.myapplication.R.string.photo_prise_avec_succ_s), Toast.LENGTH_SHORT).show()
                 image = photoUri.toString()
             }
         }
@@ -77,8 +89,6 @@ fun AjoutVehicule(
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        val mauvaisInput =
-            Toast.makeText(context, "Le placeholder doit etre un entier!", Toast.LENGTH_SHORT)
         Column(
             Modifier
                 .border(
@@ -107,10 +117,10 @@ fun AjoutVehicule(
                 ) {
                     Column {
                         TextField(value = "$kilometrage", onValueChange = {
-                            gererInput(it, onChangeInput = {kilometrage = it},mauvaisInput)
+                            kilometrage = it
                         }, modifier = Modifier.padding(5.dp, 0.dp))
                         TextField(value = "$prix", onValueChange = {
-                            gererInput(it, onChangeInput = {prix = it},mauvaisInput)
+                           prix = it
                         }, modifier = Modifier.padding(5.dp, 0.dp))
                     }
 
@@ -123,41 +133,61 @@ fun AjoutVehicule(
                     .weight(1f)
                     .fillMaxWidth(), contentAlignment = Alignment.Center
             ) {
-
+                AsyncImage(
+                    model = image,
+                    contentDescription = titre,
+                    contentScale = ContentScale.Crop,
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .alpha(0.5f),
+                    placeholder = painterResource(id = R.drawable.ic_menu_report_image),
+                    error = painterResource(id = R.drawable.ic_menu_report_image)
+                    )
                 Button(
-                    onClick = {if (photoUri != null) {
+                    onClick = { if (photoUri != null) {
                         takePicture.launch(photoUri!!)
-                    }
-                    }, modifier = Modifier
+                    }}, modifier = Modifier
                 ) {
-                    Text("Ajouter Image")
+                    Text(stringResource(com.example.myapplication.R.string.ajouter_image))
                 }
             }
+
+
 
         }
         Row {
             Button(onClick = {
-                val vehicule = Vehicule(
-                    titre = titre,
-                    kilometrage = kilometrage,
-                    image = image,
-                    prix = prix,
-                    idUtilisateur = idUtilisateur
-                )
-                vehiculeViewModel.add(vehicule)
-
-            }) { Text("Enregistrer") }
+                AjouterVehicule(titre,kilometrage,image,prix,idUtilisateur,context,vehiculeViewModel)
+                routeActuelle = Routes.DashBoard.route
+                navigationManuelle = true
+                Toast.makeText(context,
+                    context.getString(com.example.myapplication.R.string.vehicule_ajoute_avec_succes), Toast.LENGTH_SHORT).show()
+            }) { Text(stringResource(com.example.myapplication.R.string.enregistrer)) }
         }
     }
 
 }
-fun gererInput(input : String, onChangeInput : (Int) -> Unit, mauvaisInput : Toast){
-    if(input.isEmpty()){
+
+fun AjouterVehicule(titre : String, kilometrage : String, image : String,prix : String,idUtilisateur : Int,context : Context,vehiculeViewModel: VehiculeViewModel){
+    if (!kilometrage.isDigitsOnly() || kilometrage.isEmpty()){
+        Toast.makeText(context, "Le kilometrage doit etre un entier numerique", Toast.LENGTH_SHORT).show()
         return
     }
-    if (input.isDigitsOnly()) {
-       onChangeInput(input.toInt())
-    } else {
-        mauvaisInput.show()
+    if(!prix.isDigitsOnly() || prix.isEmpty()){
+        Toast.makeText(context, "Le prix doit etre un entier numerique", Toast.LENGTH_SHORT).show()
+        return
     }
+    if(image.isEmpty()){
+        Toast.makeText(context, "Il manque une image", Toast.LENGTH_SHORT).show()
+        return
+    }
+    val vehicule = Vehicule(
+        titre = titre,
+        kilometrage = kilometrage.toInt(),
+        image = image,
+        prix = prix.toInt(),
+        idUtilisateur = idUtilisateur
+    )
+    Log.d(TAG,vehicule.toString())
+    vehiculeViewModel.add(vehicule)
 }

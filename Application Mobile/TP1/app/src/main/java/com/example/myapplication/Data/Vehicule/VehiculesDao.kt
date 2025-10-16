@@ -14,9 +14,9 @@ public interface VehiculesDao{
     @Update
     fun update(vehicule: Vehicule)
     @Delete
-    fun delete(vehicule: Vehicule)
+    fun delete(vehicule: Vehicule) : Int
     @Query("SELECT v.* FROM vehicule as v INNER JOIN utilisateur as u ON v.idUtilisateur = u.idUtilisateur WHERE v.idUtilisateur = :idSelectionne")
     fun getVehiculeDeUtilisateur(idSelectionne : Int) : Flow<List<Vehicule>>
     @Query("SELECT * FROM vehicule WHERE idVehicule = :idSelectionne")
-    fun getVehiculeParId(idSelectionne : Int) : Flow<Vehicule>
+    fun getVehiculeParId(idSelectionne : Int) : Flow<Vehicule?>
 }

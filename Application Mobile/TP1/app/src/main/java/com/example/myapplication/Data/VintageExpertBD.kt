@@ -29,7 +29,7 @@ abstract class VintageExpertBD : RoomDatabase() {
                     VintageExpertBD::class.java,
                     "vintage_expert_bd"
                 ).allowMainThreadQueries()
-                    .fallbackToDestructiveMigration(true) // <-- Supprime et reconstruit la DB
+                    .fallbackToDestructiveMigration(true)
                     .build().also { Instance = it }
             }
             return Instance

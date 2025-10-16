@@ -1,5 +1,6 @@
 package com.example.myapplication.View.Pages
 
+import android.content.Context
 import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.background
@@ -24,16 +25,25 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.text.isDigitsOnly
 import androidx.navigation.NavController
 import com.example.myapplication.Data.utilisateur.Utilisateur
 import com.example.myapplication.MiddleWare.UtilisateurViewModel
+import com.example.myapplication.R
 import com.example.myapplication.View.Routes
+import com.example.myapplication.View.navigationManuelle
+import com.example.myapplication.View.routeActuelle
 
 @Composable
-fun Inscription(navController: NavController,viewModel: UtilisateurViewModel,onChangeIdUtilisateur: (Int) -> Unit){
+fun Inscription(
+    navController: NavController,
+    viewModel: UtilisateurViewModel,
+    onChangeIdUtilisateur: (Int) -> Unit
+) {
     val motDePasse = remember { mutableStateOf("") }
     val nomUtilisateur = remember { mutableStateOf("") }
     val context = LocalContext.current
@@ -66,7 +76,7 @@ fun Inscription(navController: NavController,viewModel: UtilisateurViewModel,onC
                 verticalArrangement = Arrangement.Center,
             ) {
                 Text(
-                    text = "Inscription",
+                    text = stringResource(R.string.inscription),
                     fontSize = 30.sp,
                     color = MaterialTheme.colorScheme.onSecondary
                 )
@@ -85,7 +95,7 @@ fun Inscription(navController: NavController,viewModel: UtilisateurViewModel,onC
                     verticalArrangement = Arrangement.Center
                 ) {
                     Text(
-                        "Nom utilisateur",
+                        stringResource(R.string.nom_utilisateur_inscription),
                         fontSize = 20.sp,
                         modifier = Modifier.padding(10.dp, 0.dp, 0.dp, 10.dp),
                         color = MaterialTheme.colorScheme.onSecondary
@@ -107,7 +117,7 @@ fun Inscription(navController: NavController,viewModel: UtilisateurViewModel,onC
                     verticalArrangement = Arrangement.Center
                 ) {
                     Text(
-                        "Mot de passe",
+                        stringResource(R.string.mot_de_passe_inscription),
                         fontSize = 20.sp,
                         modifier = Modifier.padding(10.dp, 0.dp, 0.dp, 10.dp),
                         color = MaterialTheme.colorScheme.onSecondary
@@ -131,23 +141,72 @@ fun Inscription(navController: NavController,viewModel: UtilisateurViewModel,onC
         }
 
         Button(
-            content = { Text("S'Inscrire", fontSize = 20.sp) }, onClick = {
-                Log.d(TAG, "Valeur nom utilisateur : ${nomUtilisateur.value}")
-                Log.d(TAG, "Valeur mot de passe : ${motDePasse.value}")
-                val utilisateur = Utilisateur(nomUtilisateur = nomUtilisateur.value, motDePasse = motDePasse.value.toInt())
-                viewModel.add(utilisateur)
-                Log.d(TAG, "Utilisateur ajoute a la base de donnée")
-                onChangeIdUtilisateur(utilisateur.idUtilisateur)
-                val toast = Toast.makeText(context,"Inscription complété avec succès! Connexion en cours...", Toast.LENGTH_SHORT)
-                toast.show()
-                Log.d(TAG, "Redirection vers dashboard")
-                navController.navigate(Routes.DashBoard.route)
-            }, colors = ButtonColors(
+            content = { Text(stringResource(R.string.s_inscrire_inscription), fontSize = 20.sp) },
+            onClick = {
+                InscrireUtilisateur(
+                    context,
+                    nomUtilisateur.value,
+                    viewModel,
+                    onChangeIdUtilisateur = { onChangeIdUtilisateur(it) },
+                    motDePasse.value
+                )
+            },
+            colors = ButtonColors(
                 containerColor = MaterialTheme.colorScheme.secondary,
                 contentColor = MaterialTheme.colorScheme.onSecondary,
                 disabledContainerColor = MaterialTheme.colorScheme.onSecondary,
                 disabledContentColor = MaterialTheme.colorScheme.onSecondary
+            ),
+
             )
-        )
     }
+}
+
+fun InscrireUtilisateur(
+    context: Context,
+    nomUtilisateur: String,
+    viewModel: UtilisateurViewModel,
+    onChangeIdUtilisateur: (Int) -> Unit,
+    motDePasse: String
+) {
+    Log.d(
+        TAG,
+        context.getString(
+            R.string.valeur_nom_utilisateur_inscription,
+            nomUtilisateur
+        )
+    )
+    Log.d(
+        TAG,
+        context.getString(R.string.valeur_mot_de_passe_inscription, motDePasse)
+    )
+    if (!motDePasse.isDigitsOnly() || motDePasse.isEmpty()) {
+        Toast.makeText(
+            context,
+            context.getString(R.string.le_mot_de_passe_doit_etre_numeric),
+            Toast.LENGTH_SHORT
+        ).show()
+        return
+    }
+    if (nomUtilisateur.isEmpty()) {
+        Toast.makeText(
+            context,
+            context.getString(R.string.vous_devez_entrer_un_nom_d_utilisateur),
+            Toast.LENGTH_SHORT
+        ).show()
+        return
+    }
+
+    val utilisateur = Utilisateur(nomUtilisateur = nomUtilisateur, motDePasse = motDePasse.toInt())
+    viewModel.add(utilisateur)
+    Log.d(TAG, context.getString(R.string.utilisateur_ajoute_a_la_base_de_donn_e))
+    onChangeIdUtilisateur(utilisateur.idUtilisateur)
+    Toast.makeText(
+        context,
+        context.getString(R.string.inscription_compl_t_avec_succ_s_connexion_en_cours),
+        Toast.LENGTH_SHORT
+    ).show()
+    Log.d(TAG, context.getString(R.string.redirection_vers_dashboard))
+    routeActuelle = Routes.DashBoard.route
+    navigationManuelle = true
 }

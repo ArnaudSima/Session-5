@@ -19,6 +19,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -26,23 +27,26 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.text.isDigitsOnly
 import androidx.navigation.NavController
 import com.example.myapplication.Data.utilisateur.Utilisateur
 import com.example.myapplication.MiddleWare.UtilisateurViewModel
+import com.example.myapplication.R
 import com.example.myapplication.View.Enums.BottomBar
 import com.example.myapplication.View.Routes
+import com.example.myapplication.View.navigationManuelle
+import com.example.myapplication.View.routeActuelle
 
 @OptIn(ExperimentalMaterial3Api::class)
 
 @Composable
 fun Connexion(
-    navController: NavController,
     viewModel: UtilisateurViewModel,
     onChangeIdUtilisateur: (Int) -> Unit,
-    onChangeBottomBar: (BottomBar) -> Unit
 ) {
     val motDePasse = remember { mutableStateOf("") }
     val nomUtilisateur = remember { mutableStateOf("") }
@@ -50,6 +54,7 @@ fun Connexion(
 
     val TAG = "Connexion"
     val Context = LocalContext.current
+
     Column(
         modifier = Modifier.fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -76,7 +81,7 @@ fun Connexion(
                 verticalArrangement = Arrangement.Center,
             ) {
                 Text(
-                    text = "Connexion",
+                    text = stringResource(R.string.connexion),
                     fontSize = 30.sp,
                     color = MaterialTheme.colorScheme.onSecondary
                 )
@@ -95,7 +100,7 @@ fun Connexion(
                     verticalArrangement = Arrangement.Center
                 ) {
                     Text(
-                        "Nom utilisateur",
+                        stringResource(R.string.nom_utilisateur),
                         fontSize = 20.sp,
                         modifier = Modifier.padding(10.dp, 0.dp, 0.dp, 10.dp),
                         color = MaterialTheme.colorScheme.onSecondary
@@ -117,7 +122,7 @@ fun Connexion(
                     verticalArrangement = Arrangement.Center
                 ) {
                     Text(
-                        "Mot de passe",
+                        stringResource(R.string.mot_de_passe),
                         fontSize = 20.sp,
                         modifier = Modifier.padding(10.dp, 0.dp, 0.dp, 10.dp),
                         color = MaterialTheme.colorScheme.onSecondary
@@ -141,16 +146,14 @@ fun Connexion(
         }
 
         Button(
-            content = { Text("Se connecter", fontSize = 20.sp) }, onClick = {
+            content = { Text(stringResource(R.string.se_connecter_connexion), fontSize = 20.sp) }, onClick = {
                 connecterUtilisateur(
                     tag = TAG,
                     viewModel = viewModel,
                     nomUtilisateur = nomUtilisateur.value,
                     motDePasse = motDePasse.value,
                     onChangeIdUtilisateur = { onChangeIdUtilisateur(it) },
-                    onChangeRoute = { navController.navigate(it) },
                     context = Context,
-                    onChangeBottomBar = { onChangeBottomBar(it) }
                 )
 
             }, colors = ButtonColors(
@@ -169,17 +172,16 @@ fun connecterUtilisateur(
     nomUtilisateur: String,
     motDePasse: String,
     onChangeIdUtilisateur: (Int) -> Unit,
-    onChangeRoute: (String) -> Unit,
     context: Context,
-    onChangeBottomBar: (BottomBar) -> Unit
 
 ) {
-    var messageUtilisateur = "Mauvais mot de passe ou nom d'utilisateur"
+    var messageUtilisateur =
+        context.getString(R.string.mauvais_mot_de_passe_ou_nom_d_utilisateur_connexion)
 
-    Log.d(tag, "Valeur nom utilisateur : ${nomUtilisateur}")
-    Log.d(tag, "Valeur mot de passe : ${motDePasse}")
-    if (motDePasse.trim().isEmpty()) {
-        messageUtilisateur = "Mauvais mot de passe ou nom d'utilisateur"
+    Log.d(tag, context.getString(R.string.valeur_nom_utilisateur, nomUtilisateur))
+    Log.d(tag, context.getString(R.string.valeur_mot_de_passe, motDePasse))
+    if (!motDePasse.isDigitsOnly() || motDePasse.isEmpty() || nomUtilisateur.isEmpty()) {
+        messageUtilisateur = context.getString(R.string.mauvais_mot_de_passe_ou_nom_d_utilisateur)
         Toast.makeText(context, messageUtilisateur, Toast.LENGTH_SHORT).show()
         return
     }
@@ -191,10 +193,10 @@ fun connecterUtilisateur(
         )
     if (utilisateur != null) {
         onChangeIdUtilisateur(utilisateur.idUtilisateur)
-        messageUtilisateur = "Connexion en cours..."
-        onChangeBottomBar(BottomBar.DASHBOARD)
-        onChangeRoute(Routes.DashBoard.route)
-        Log.d(tag, "Utilisateur qui se connecte : $utilisateur")
+        messageUtilisateur = context.getString(R.string.connexion_en_cours)
+        Log.d(tag, context.getString(R.string.utilisateur_qui_se_connecte, utilisateur))
+        routeActuelle = Routes.DashBoard.route
+        navigationManuelle = true
         Toast.makeText(context, messageUtilisateur, Toast.LENGTH_SHORT).show()
     }
 
